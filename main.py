@@ -12,12 +12,21 @@ from forms import CreatePostForm, LoginForm, RegisterForm, CommentForm, User, Bl
 from flask_migrate import Migrate
 from faker import Faker as Fk
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # make flask app
 app = Flask(__name__)
 # make secret key for wtf form (prevent CSRF attacks)
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "default_secret_key")
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+secret_key = os.environ.get("SECRET_KEY")
+
+if secret_key:
+    print(f"SECRET_KEY: {secret_key}")
+else:
+    print("SECRET_KEY not found.")
 ckeditor = CKEditor(app)
 Bootstrap(app)
 faker = Fk(['ko-KR', 'ja-JP'])
