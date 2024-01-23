@@ -22,26 +22,18 @@ app = Flask(__name__)
 # make secret key for wtf form (prevent CSRF attacks)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 secret_key = os.environ.get("SECRET_KEY")
-
-if secret_key:
-    print(f"SECRET_KEY: {secret_key}")
-else:
-    print("SECRET_KEY not found.")
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "default_secret_key")
 ckeditor = CKEditor(app)
 Bootstrap(app)
 faker = Fk(['ko-KR', 'ja-JP'])
 
-##CONNECT TO DB
+# CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
 
-
 with app.app_context():
-
     db.create_all()
 
 # instance of flask_login
@@ -58,7 +50,6 @@ def load_user(user_id):
 
 @app.route('/', methods=["POST", "GET"])
 def get_all_posts():
-    print(os.environ.get("SECRET_KEY"))
     # check flask_login status with UserMixin conditions (returns false if not met)
     if current_user.is_authenticated:
         print(f"admin_auth: {current_user.is_admin}")
