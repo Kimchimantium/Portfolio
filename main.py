@@ -100,7 +100,7 @@ def register():
                     name=form.name.data,
                     email=form.email.data,
                     password=form.password.data,
-                    is_admin = True
+                    is_admin=True
                 )
             else:
                 to_add = User(
