@@ -54,4 +54,30 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   });
 });
+//about.html 'Show Skill Stacks' btn's caret icon change when expanded(collapsed)
+document.addEventListener('DOMContentLoaded', function() {
+    const collapseElement = document.getElementById('collapseExample');
+    const button = document.querySelector('a[href="#collapseExample"] i');
 
+    collapseElement.addEventListener('show.bs.collapse', function () {
+        button.classList.remove('fa-caret-down');
+        button.classList.add('fa-caret-up'); // Change to caret-up when the collapse is opening
+    });
+
+    collapseElement.addEventListener('hide.bs.collapse', function () {
+        button.classList.remove('fa-caret-up');
+        button.classList.add('fa-caret-down'); // Change back to caret-down when the collapse is closing
+    });
+});
+
+document.getElementById('toggleLang').addEventListener('click', function() {
+    var englishContent = document.getElementById('englishContent');
+    var koreanContent = document.getElementById('koreanContent');
+    if (englishContent.style.display === 'none') {
+        englishContent.style.display = 'block';
+        koreanContent.style.display = 'none';
+    } else {
+        englishContent.style.display = 'none';
+        koreanContent.style.display = 'block';
+    }
+});

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+        <button class='btn btn-danger btn-sm mb-3 float-right' id="toggleLang">한/A</button>
+    <div id="englishContent" class="language-content">
+        <div class="row">
+            <div class="col-md-4 text-center mt-3">
+                <img src="static/img/프로필사진.jpg" class="img-fluid" alt="Kim Jiwoo">
+                <p><strong>Age:</strong> 28 | <strong>Name:</strong> Jiwoo</p>
+                <a href="{{ url_for('about') }}"><button class="btn btn-warning">see skill stacks</button></a>
+            </div>
+            <div class="col-md-8">
+                <h1>Kim Jiwoo</h1>
+                <p>I am a recent graduate from Sungkyunkwan University with a major in Child and Youth Studies. My
+                    passion
+                    lies in applying my diverse set of skills, ranging from coding to UX/UI design, in practical
+                    scenarios
+                    to drive innovation and efficiency. With experiences in various fields, including customer
+                    service
+                    and
+                    media editing, I am seeking opportunities to contribute and grow in a dynamic work environment.
+                    Fluent
+                    in English, thanks to my studies and work abroad, I am well-prepared for the global market.</p>
+                <p><strong>Skills:</strong> Python, Photoshop, Premiere, Matplotlib, Numpy, Selenium, Bootstrap,
+                    CSS,
+                    Flask,
+                    HTML, JavaScript, Pandas, PostgreSQL, SQLite, Illustrator, Cloud Services</p>
+                <p><strong>Interests:</strong> Web Development, Frontend and Backend Development, App Development
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="koreanContent" class="language-content" style="display:none;">
+        <div class="row">
+            <div class="col-md-4 text-center mt-3">
+                <img src="static/img/프로필사진.jpg" class="img-fluid" alt="Kim Jiwoo">
+                <p><strong>Age:</strong> 28 | <strong>Name:</strong> Jiwoo</p>
+                <a href="{{ url_for('about') }}"><button class="btn btn-warning">기술스택 보기</button></a>
+            </div>
+            <div class="col-md-8">
+                <h1>다방면의 열정을 실현하기 위한 첫걸음</h1>
+                <p>안녕하세요, 성균관대학교 아동청소년학과를 전공한 김지우입니다. 최근 코딩 학습을 포함하여, 저의 지난 경험과 향후 희망 분야에 대해 소개해 보겠습니다.</p>
+                <h2><strong>지원 동기 및 희망 분야:</strong></h2>
+                <p>학교 내외에서 다양한 경험을 쌓으며 제가 가진 능력을 실전에 적용하고자 하는 열정이 커, 이를 실현하기 위해 귀사에 지원하게 되었습니다. 특히,
+                    UX/UI 디자인, 프론트엔드 코딩, 촬영 및 미디어 편집 분야에서 실무 경험을 쌓고 싶으며, 최근에는 Python 프로그래밍에 대한 이해를 깊게 하는 교육을
+                    수료하였습니다. 이를 통해 데이터 분석, 웹 개발 등의 추가 역량을 개발하고자 합니다. 제가 가진 역량이 기업에 기여할 수 있음을 확신하며, 이를 통해
+                    상호 성장의 기회를 만들고 싶습니다.</p>
+                <h2><strong>보유 전공 지식 및 스킬:</strong></h2>
+                <p><strong>1. 언어 능력: </strong>호주와 필리핀에서의 유학 경험과 워킹홀리데이를 통해 영어 회화, 독해, 비즈니스 영어에서 뛰어난 능력을 보유하고 있습니다.
+                </p>
+                <p><strong>2. 컴퓨터 및 미디어 편집 능력: </strong>워드, PowerPoint, 엑셀, Adobe Illustrator, Photoshop, Premiere
+                    Pro 등을 활용한 다년간의 경험을 바탕으로 높은 컴퓨터 활용 능력을 갖추고 있습니다.</p>
+                <p><strong>3. 고객 응대 능력: </strong>다양한 아르바이트 경험을 통해 탁월한 고객 서비스 능력을 개발했습니다.</p>
+                <p><strong>4. 프로그래밍 능력: </strong>Udemy에서 수료한 Angela`s Python Bootcamp를 통해 Python 프로그래밍 기초와 웹 개발, 데이터
+                    분석에
+                    대한 지식을 습득했습니다.</p>
+                <h2><strong>주요 활동 사항:</strong></h2>
+                <p><strong>1. </strong>아동청소년학과 전공을 통해 아동 미디어 콘텐츠 개발과 아동 발달 과정에 대해 깊이 있는 지식을 쌓았습니다.</p>
+                <p><strong>2. </strong>관광경영학과 전공 경험을 바탕으로 IT와 관광의 결합에 대한 이해를 높였으며, 이를 통해 웹디자인과 미디어 편집 기술을 개발했습니다.
+                </p>
+                <p><strong>3. </strong>사진과 영상 촬영에 대한 오랜 취미와 SAPA 동아리 활동을 통해 다양한 촬영 기기 사용법과 편집 기술을 익혔습니다.</p>
+                <p><strong>성격 및 향후 포부:</strong>
+                    새로운 기술이나 정보를 배우는 데 큰 흥미를 가지고 있으며, 특히 관심 분야에서는 깊이 있는 지식을 습득하려는 자세를 가지고 있습니다. 빠르게 변
+                    화하는 기술 세계에서 지속적으로 학습하며 제 역량을 발휘하고자 합니다. 또한, 최근 팀워크의 중요성을 깨달아, 협업을 통한 공동 목표 달성에 기여하
+                    고 싶습니다. 지난 6개월간 집중적인 Python 학습 경험을 바탕으로, 저는 더 넓은 범위의 업무를 수행하고 새로운 도전을 통해 더 큰 성장을 이루고자
+                    합니다. 귀사 근무를 통해 제가 가진 지식과 열정을 실제 업무에 적용하고, 더 나아가 기업의 성장에 기여하는 인재가 되고자 합니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -15,10 +15,9 @@ import os
 
 
 # TODO
-# about.html: add icons to skill stack bar content ✓
-# base.html: footer email as modal to enable user copy the address ✓
-
-
+# about.html 'Show Skill Stacks' btn's caret icon change when expanded(collapsed) ✓
+# make 'home.html'
+# link flask app with htmls properly
 
 # make flask app
 app = Flask(__name__)
@@ -55,6 +54,7 @@ def load_user(user_id):
 
 @app.route('/', methods=["POST", "GET"])
 def get_all_posts():
+    masthead_text = 'About Him'
     # check flask_login status with UserMixin conditions (returns false if not met)
     if current_user.is_authenticated:
         print(f"admin_auth: {current_user.is_admin}")
@@ -64,11 +64,12 @@ def get_all_posts():
     else:
         print('unlogged-in')
     posts=BlogPost.query.all()
-    return render_template("index.html", all_posts=posts)
+    return render_template("home.html", all_posts=posts, masthead_text=masthead_text)
 
 
 @app.route('/gen-post', methods=["POST", "GET"])
 def gen_post():
+    masthead_text = None
     print(current_user.name)
     post_user = User(
         name=current_user.name,
@@ -88,11 +89,12 @@ def gen_post():
         db.session.add(new_post)
         db.session.commit()
 
-    return render_template('index.html')
+    return render_template('portfolio.html')
 
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    masthead_text = 'Sign in to JiwooHub'
     error = None
     form = RegisterForm()
     if form.validate_on_submit():
@@ -120,11 +122,13 @@ def register():
             return redirect('/login')
     return render_template("register.html",
                            form=form,
-                           error=error)
+                           error=error,
+                           masthead_text=masthead_text)
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    masthead_text = 'Login to JiwooHub'
     error = None
     form = LoginForm()
     if form.validate_on_submit():
@@ -139,7 +143,7 @@ def login():
                 return redirect('/')
         else:
             error = "Account Doesn't Exists"
-    return render_template("login.html", form=form, error=error)
+    return render_template("login.html", form=form, error=error, masthead_text=masthead_text)
 
 
 @app.route('/logout')
@@ -148,6 +152,19 @@ def logout():
     logout_user()
     return redirect(url_for('get_all_posts'))
 
+@app.route('/portfolio')
+def portfolio():
+    masthead_text = "See Jiwoo's Works"
+    # check flask_login status with UserMixin conditions (returns false if not met)
+    if current_user.is_authenticated:
+        print(f"admin_auth: {current_user.is_admin}")
+        print('currently logged in')
+        print(current_user.name)
+
+    else:
+        print('unlogged-in')
+    posts = BlogPost.query.all()
+    return render_template("portfolio.html", all_posts=posts, masthead_text=masthead_text)
 
 @app.route("/post/<int:post_id>", methods=["POST", "GET"])
 def show_post(post_id):
@@ -168,12 +185,14 @@ def show_post(post_id):
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    masthead_text = "Jiwoo's Skill Stack"
+    return render_template("about.html", masthead_text=masthead_text)
 
 
 @app.route("/contact")
 def contact():
-    return render_template("contact.html")
+    masthead_text = 'Contact Jiwoo'
+    return render_template("contact.html", masthead_text=masthead_text)
 
 
 @app.route("/new-post", methods=["POST", "GET"])
