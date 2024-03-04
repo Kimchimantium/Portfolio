@@ -42,23 +42,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 creds.classList.add('not-hovered');
             });
 });
-    .collapse:not(.show) .skill-content {
-        position: relative;
-        max-height: 100px; /* Adjust based on the desired preview height */
-        overflow: hidden;
-    }
 
-    .collapse:not(.show) .skill-content::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 40px; /* Height of the fading effect */
-        background: linear-gradient(transparent, #fff); /* Use your background color */
-    }
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.getElementById("copyButton").addEventListener("click", function() {
+    var emailText = document.getElementById("emailText").innerText;
+    navigator.clipboard.writeText(emailText).then(function() {
+      alert('Email copied to clipboard!');
+    }, function(err) {
+      console.error('Failed to copy: ', err);
+      alert('Failed to copy text to clipboard');
+    });
+  });
+});
 
-    .collapse.show .skill-content::after {
-        /* Remove the effect when expanded */
-        display: none;
-    }

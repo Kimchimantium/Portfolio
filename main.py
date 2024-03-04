@@ -15,7 +15,8 @@ import os
 
 
 # TODO
-# about.html: add icons to skill stack bar content
+# about.html: add icons to skill stack bar content ✓
+# base.html: footer email as modal to enable user copy the address ✓
 
 
 
