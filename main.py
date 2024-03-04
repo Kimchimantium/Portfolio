@@ -14,6 +14,11 @@ from faker import Faker as Fk
 import os
 
 
+# TODO
+# about.html: add icons to skill stack bar content
+
+
+
 # make flask app
 app = Flask(__name__)
 # make secret key for wtf form (prevent CSRF attacks)
