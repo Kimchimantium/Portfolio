@@ -13,27 +13,26 @@ from flask_migrate import Migrate
 from faker import Faker as Fk
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
-
 
 # make flask app
 app = Flask(__name__)
 # make secret key for wtf form (prevent CSRF attacks)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-secret_key = os.environ.get("SECRET_KEY")
+print(os.environ.get("SECRET_KEY"))
 ckeditor = CKEditor(app)
 Bootstrap(app)
 faker = Fk(['ko-KR', 'ja-JP'])
 
-# CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", 'sqlite:///blog.db')
+##CONNECT TO DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
 
+
 with app.app_context():
+
     db.create_all()
 
 # instance of flask_login
@@ -55,6 +54,7 @@ def get_all_posts():
         print(f"admin_auth: {current_user.is_admin}")
         print('currently logged in')
         print(current_user.name)
+
     else:
         print('unlogged-in')
     posts=BlogPost.query.all()
@@ -100,7 +100,7 @@ def register():
                     name=form.name.data,
                     email=form.email.data,
                     password=form.password.data,
-                    is_admin=True
+                    is_admin = True
                 )
             else:
                 to_add = User(
