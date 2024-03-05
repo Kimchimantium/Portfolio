@@ -22,9 +22,8 @@ dotenv.load_dotenv()
 
 
 # TODO
-# post.html: edit size of wtf-quickform btn
-# base.html: change navbar padding
-#sqldb: connect to render.com PostgreSQL
+# skill-stacks.html: fix skill stack's collapse btn logic ✓
+
 
 
 # make flask app
@@ -58,7 +57,13 @@ def load_user(user_id):
 
 @app.route('/', methods=["POST", "GET"])
 def home():
-    return render_template('index.html',)
+    masthead_text = 'HOME'
+    subheading_text = 'Welcome to JiwooHub!'
+    return render_template('index.html',
+                           masthead_text=masthead_text,
+                           subheading_text=subheading_text)
+
+
 @app.route('/introduction', methods=["POST", "GET"])
 def introduction():
     masthead_text = 'INTRODUCTION'
@@ -219,7 +224,7 @@ def show_post(post_id):
 @app.route("/skill-stacks")
 def about():
     masthead_text = "Skill Stack"
-    subheading_text = 'Developer Skills'
+    subheading_text = 'My Developer Skills'
     return render_template("skill-stacks.html", masthead_text=masthead_text, subheading_text=subheading_text)
 
 
@@ -349,4 +354,4 @@ def bugfix():
     return render_template('bugfix.html')
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True, port=3230)

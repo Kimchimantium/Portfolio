@@ -54,21 +54,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   });
 });
-//about.html 'Show Skill Stacks' btn's caret icon change when expanded(collapsed)
-document.addEventListener('DOMContentLoaded', function() {
-    const collapseElement = document.getElementById('collapseExample');
-    const button = document.querySelector('a[href="#collapseExample"] i');
-
-    collapseElement.addEventListener('show.bs.collapse', function () {
-        button.classList.remove('fa-caret-up');
-        button.classList.add('fa-caret-down'); // Change to caret-up when the collapse is opening
-    });
-
-    collapseElement.addEventListener('hide.bs.collapse', function () {
-        button.classList.remove('fa-caret-down');
-        button.classList.add('fa-caret-up'); // Change back to caret-down when the collapse is closing
-    });
-});
 
 document.getElementById('toggleLang').addEventListener('click', function() {
     var englishContent = document.getElementById('englishContent');
@@ -80,4 +65,25 @@ document.getElementById('toggleLang').addEventListener('click', function() {
         englishContent.style.display = 'none';
         koreanContent.style.display = 'block';
     }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const collapseElement = document.getElementById('collapseExample');
+    const toggleButton = document.getElementById('toggleButton');
+    const buttonIcon = toggleButton.querySelector('i'); // Assuming there's only one icon in the toggleButton
+
+    // Convert jQuery event handling to vanilla JavaScript for Bootstrap 5
+    collapseElement.addEventListener('show.bs.collapse', function () {
+        console.log('Collapse is opening');
+        toggleButton.innerHTML = 'Hide Skill Stacks <i class="fa-solid fa-caret-up"></i>';
+        // If using classList for the icon, uncomment the next line
+        // buttonIcon.classList.replace('fa-caret-up', 'fa-caret-down');
+    });
+
+    collapseElement.addEventListener('hide.bs.collapse', function () {
+        console.log('Collapse is closing');
+        toggleButton.innerHTML = 'Show Skill Stacks <i class="fa-solid fa-caret-down"></i>';
+        // If using classList for the icon, uncomment the next line
+        // buttonIcon.classList.replace('fa-caret-down', 'fa-caret-up');
+    });
 });
