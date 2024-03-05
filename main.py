@@ -344,6 +344,9 @@ def delete_comment(post_id):
     db.session.commit()
     return redirect(url_for('show_post', post_id=post_id))
 
+@app.route('/bugfix', methods=['POST', 'GET'])
+def bugfix():
+    return render_template('bugfix.html')
 
 if __name__ == "__main__":
-    app.run(debug=True, port=9080)
+    app.run(debug=False)
