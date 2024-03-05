@@ -60,13 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const button = document.querySelector('a[href="#collapseExample"] i');
 
     collapseElement.addEventListener('show.bs.collapse', function () {
-        button.classList.remove('fa-caret-down');
-        button.classList.add('fa-caret-up'); // Change to caret-up when the collapse is opening
+        button.classList.remove('fa-caret-up');
+        button.classList.add('fa-caret-down'); // Change to caret-up when the collapse is opening
     });
 
     collapseElement.addEventListener('hide.bs.collapse', function () {
-        button.classList.remove('fa-caret-up');
-        button.classList.add('fa-caret-down'); // Change back to caret-down when the collapse is closing
+        button.classList.remove('fa-caret-down');
+        button.classList.add('fa-caret-up'); // Change back to caret-down when the collapse is closing
     });
 });
 

@@ -11,13 +11,14 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from forms import CreatePostForm, LoginForm, RegisterForm, CommentForm, User, BlogPost, db, Comment
 from flask_migrate import Migrate
 from faker import Faker as Fk
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import os
 
-
 # TODO
-# about.html 'Show Skill Stacks' btn's caret icon change when expanded(collapsed) ✓
-# make 'home.html'
-# link flask app with htmls properly
+# change body font to 'ROBOTO'
+# build index.html contents
 
 # make flask app
 app = Flask(__name__)
@@ -34,10 +35,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
-
-
 with app.app_context():
-
     db.create_all()
 
 # instance of flask_login
@@ -51,10 +49,14 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(user_id)
 
-
 @app.route('/', methods=["POST", "GET"])
-def get_all_posts():
-    masthead_text = 'About Him'
+def home():
+    
+    return render_template('index.html',)
+@app.route('/introduction', methods=["POST", "GET"])
+def introduction():
+    masthead_text = 'INTRODUCTION'
+    subheading_text = 'About Jiwoo Kim'
     # check flask_login status with UserMixin conditions (returns false if not met)
     if current_user.is_authenticated:
         print(f"admin_auth: {current_user.is_admin}")
@@ -63,8 +65,11 @@ def get_all_posts():
 
     else:
         print('unlogged-in')
-    posts=BlogPost.query.all()
-    return render_template("home.html", all_posts=posts, masthead_text=masthead_text)
+    posts = BlogPost.query.all()
+    return render_template("introduction.html",
+                           all_posts=posts,
+                           masthead_text=masthead_text,
+                           subheading_text=subheading_text)
 
 
 @app.route('/gen-post', methods=["POST", "GET"])
@@ -108,7 +113,7 @@ def register():
                     name=form.name.data,
                     email=form.email.data,
                     password=form.password.data,
-                    is_admin = True
+                    is_admin=True
                 )
             else:
                 to_add = User(
@@ -123,7 +128,7 @@ def register():
     return render_template("register.html",
                            form=form,
                            error=error,
-                           masthead_text=masthead_text)
+                           masthead_text=masthead_text, subheading_text=subheading_text)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -143,7 +148,8 @@ def login():
                 return redirect('/')
         else:
             error = "Account Doesn't Exists"
-    return render_template("login.html", form=form, error=error, masthead_text=masthead_text)
+    return render_template("login.html", form=form, error=error, masthead_text=masthead_text,
+                           subheading_text=subheading_text)
 
 
 @app.route('/logout')
@@ -152,9 +158,11 @@ def logout():
     logout_user()
     return redirect(url_for('get_all_posts'))
 
+
 @app.route('/portfolio')
 def portfolio():
-    masthead_text = "See Jiwoo's Works"
+    masthead_text = "PORTFOLIO"
+    subheading_text = "See My Works"
     # check flask_login status with UserMixin conditions (returns false if not met)
     if current_user.is_authenticated:
         print(f"admin_auth: {current_user.is_admin}")
@@ -164,7 +172,9 @@ def portfolio():
     else:
         print('unlogged-in')
     posts = BlogPost.query.all()
-    return render_template("portfolio.html", all_posts=posts, masthead_text=masthead_text)
+    return render_template("portfolio.html", all_posts=posts, masthead_text=masthead_text,
+                           subheading_text=subheading_text)
+
 
 @app.route("/post/<int:post_id>", methods=["POST", "GET"])
 def show_post(post_id):
@@ -183,17 +193,42 @@ def show_post(post_id):
                            name=blogpost_instance.user.name,
                            editor_auth=editor_auth)
 
-@app.route("/about")
+
+
+@app.route("/skill-stacks")
 def about():
-    masthead_text = "Jiwoo's Skill Stack"
-    return render_template("about.html", masthead_text=masthead_text)
+    masthead_text = "Skill Stack"
+    subheading_text = 'Developer Skills'
+    return render_template("skill-stacks.html", masthead_text=masthead_text, subheading_text=subheading_text)
 
 
-@app.route("/contact")
+@app.route("/contact", methods=['POST', 'GET'])
 def contact():
-    masthead_text = 'Contact Jiwoo'
-    return render_template("contact.html", masthead_text=masthead_text)
+    masthead_text = 'CONTACT'
+    subheading_text = 'Contact Jiwoo'
+    return render_template("contact.html", masthead_text=masthead_text, subheading_text=subheading_text)
 
+@app.route('/submit', methods=['POST'])
+def submit():
+    if request.method == 'POST':
+        name = request.form.get('name', '')
+        email = request.form.get('email', '')
+        phone = request.form.get('phone', '')
+        message = request.form.get('message', '')
+        # send contact info to my email
+        MY_EMAIL = os.environ.get('MY_EMAIL')
+        EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+        RECIPIENT = os.environ.get('RECIPIENT')
+        try:
+            with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+                connection.starttls()
+                connection.login(user=MY_EMAIL, password=EMAIL_PASSWORD)
+                connection.sendmail(MY_EMAIL, RECIPIENT,
+                                 msg=f"name: {name}\nemail: {email}\nphone: {phone}\nmessage: {message}")
+                print("Email Sent Successfully")
+        except smtplib.SMTPException as e:
+            print(f"Error: {e}")
+        return redirect(url_for('contact'))
 
 @app.route("/new-post", methods=["POST", "GET"])
 @login_required
@@ -264,6 +299,7 @@ def comment(post_id):
     comment_added = Comment.query.get(post_id)
     return redirect(url_for("show_post", post_id=post_id))
 
+
 @app.route('/delete_comment/<int:post_id>', methods={"POST", "GET"})
 def delete_comment(post_id):
     text = request.args.get('text')
@@ -275,4 +311,3 @@ def delete_comment(post_id):
 
 if __name__ == "__main__":
     app.run(debug=True, port=9080)
-
