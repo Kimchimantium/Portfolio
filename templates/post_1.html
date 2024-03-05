@@ -1,11 +1,22 @@
 {% extends 'base.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block content %}
+{% block content %}}
+
+
 <!-- Post Content -->
+<article>
     <div class="container">
         <div class="row">
+
             <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="post-heading">
+                    <h1>{{post.title}}</h1>
+                    <h2 class="subheading">{{post.subtitle}}</h2>
+                    <span class="meta">Posted by
+              <a href="#">Jiwoo</a>
+                        <hr>
+              on {{post.date}}</span>
                 {{ post.body|safe }}
                 <hr>
                 {% if editor_auth or current_user.is_admin %}
@@ -14,6 +25,8 @@
                         Post</a>
                 </div>
                 {% endif %}
+
+
                 <!--           Comments Area -->
                 <div class="col-lg-8 col-md-10 mx-auto comment">
                     <ul class="commentList">
@@ -39,23 +52,19 @@
             </div>
         </div>
     </div>
-<hr>
-<div class="overlay"></div>
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="post-heading">
-                <h1>{{post.title}}</h1>
-                <h2 class="subheading">{{post.subtitle}}</h2>
-                <span class="meta">Posted by
-              <a href="#">{{name}}</a>
-              on {{post.date}}</span>
-                {{ ckeditor.load() }}
-                {{ ckeditor.config(name=body) }}
-                <form method="POST" action="{{ url_for('comment', post_id=post.id) }}" id="my-form">
-                    {{ wtf.quick_form(comment_form, novalidate=True, button_map={"submit": "primary"}) }}
+    <!-- Post Content -->
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                    {{ ckeditor.load() }}
+                    {{ ckeditor.config(name=body) }}
+                    <form method="POST" action="{{ url_for('comment', post_id=post.id) }}" id="my-form">
+                        {{ wtf.quick_form(comment_form, novalidate=True, button_map={"submit": "primary"}) }}
             </div>
         </div>
     </div>
-</div>
+</article>
+
+<hr>
 {% endblock %}

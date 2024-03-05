@@ -12,13 +12,19 @@ from forms import CreatePostForm, LoginForm, RegisterForm, CommentForm, User, Bl
 from flask_migrate import Migrate
 from faker import Faker as Fk
 import smtplib
+from smtplib import SMTP
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
+import dotenv
+
+dotenv.load_dotenv()
+
 
 # TODO
-# change body font to 'ROBOTO'
-# build index.html contents
+# apply flask-login system ✓
+# first post create ✓
+
 
 # make flask app
 app = Flask(__name__)
@@ -51,7 +57,6 @@ def load_user(user_id):
 
 @app.route('/', methods=["POST", "GET"])
 def home():
-    
     return render_template('index.html',)
 @app.route('/introduction', methods=["POST", "GET"])
 def introduction():
@@ -99,7 +104,8 @@ def gen_post():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-    masthead_text = 'Sign in to JiwooHub'
+    masthead_text = 'REGISTER'
+    subheading_text = 'Sign up to JiwooHub'
     error = None
     form = RegisterForm()
     if form.validate_on_submit():
@@ -133,7 +139,8 @@ def register():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    masthead_text = 'Login to JiwooHub'
+    masthead_text = 'LOGIN'
+    subheading_text = 'Login to JiwooHub'
     error = None
     form = LoginForm()
     if form.validate_on_submit():
@@ -156,11 +163,12 @@ def login():
 def logout():
     # change current_user's status to logout
     logout_user()
-    return redirect(url_for('get_all_posts'))
+    return redirect(url_for('home'))
 
 
 @app.route('/portfolio')
 def portfolio():
+    posts = BlogPost.query.all()
     masthead_text = "PORTFOLIO"
     subheading_text = "See My Works"
     # check flask_login status with UserMixin conditions (returns false if not met)
@@ -176,21 +184,29 @@ def portfolio():
                            subheading_text=subheading_text)
 
 
-@app.route("/post/<int:post_id>", methods=["POST", "GET"])
+@app.route("/post/<int:post_id>", methods=["GET"])
 def show_post(post_id):
     editor_auth = False
     # show comments
     blogpost_instance = BlogPost.query.get(post_id)
+    print(blogpost_instance)
     comments = Comment.query.filter_by(blogpost_id=post_id).all()
     # remove comments
-    if current_user.is_authenticated:
-        if blogpost_instance.user.name == current_user.name:
-            editor_auth = True
+    if blogpost_instance and blogpost_instance.user:
+        user_name = blogpost_instance.user.name
+        comments = Comment.query.filter_by(blogpost_id=post_id).all()
+        # remove comments
+        try:
+            if current_user.is_authenticated:
+                if blogpost_instance.user.name == current_user.name:
+                    editor_auth = True
+        except AttributeError:
+            pass
     return render_template("post.html",
                            comments=comments,
                            comment_form=CommentForm(),
                            post=blogpost_instance,
-                           name=blogpost_instance.user.name,
+                           name='Jiwoo',
                            editor_auth=editor_auth)
 
 
@@ -210,29 +226,45 @@ def contact():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    if request.method == 'POST':
-        name = request.form.get('name', '')
-        email = request.form.get('email', '')
-        phone = request.form.get('phone', '')
-        message = request.form.get('message', '')
-        # send contact info to my email
-        MY_EMAIL = os.environ.get('MY_EMAIL')
-        EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-        RECIPIENT = os.environ.get('RECIPIENT')
-        try:
-            with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
-                connection.starttls()
-                connection.login(user=MY_EMAIL, password=EMAIL_PASSWORD)
-                connection.sendmail(MY_EMAIL, RECIPIENT,
-                                 msg=f"name: {name}\nemail: {email}\nphone: {phone}\nmessage: {message}")
-                print("Email Sent Successfully")
-        except smtplib.SMTPException as e:
-            print(f"Error: {e}")
-        return redirect(url_for('contact'))
+    MY_EMAIL = os.environ.get('MY_EMAIL')
+    EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
-@app.route("/new-post", methods=["POST", "GET"])
+    if request.method == 'POST':
+            name = request.form.get('name', '')
+            email = request.form.get('email', '')
+            phone = request.form.get('phone', '')
+            message = request.form.get('message', '')
+            # send contact info to my email
+            msg = MIMEMultipart()
+            msg['From'] = 'JiwooHub'
+            msg['To'] = MY_EMAIL
+            msg['Subject'] = 'New Contact Info Submission'
+            body = f"name: {name}\nemail: {email}\nphone: {phone}\nmessage: {message}"
+            msg.attach(MIMEText(body, 'plain'))
+
+            try:
+                with SMTP("smtp.gmail.com", port=587) as connection:
+                    connection.starttls()
+                    connection.login(user=MY_EMAIL, password=EMAIL_PASSWORD)
+                    print('login successful')
+                    connection.send_message(msg)
+                    print("Email Sent Successfully")
+            except smtplib.SMTPException as e:
+                print(f"Error: {e}")
+            return redirect(url_for('contact'))
+
+
+@app.route("/post_1")
+def post_1():
+    post = BlogPost.query.get(1)
+    comment_form = CommentForm()
+    return render_template('post_1.html', post=post, comment_form=comment_form)
+
+@app.route("/make-post", methods=["POST", "GET"])
 @login_required
 def add_new_post():
+    masthead_text = 'MAKE POST'
+    subheading_text = 'Add to Portfolio'
     form = CreatePostForm()
     if form.validate_on_submit():
         new_post = BlogPost(
@@ -240,21 +272,20 @@ def add_new_post():
             subtitle=form.subtitle.data,
             body=form.body.data,
             img_url=form.img_url.data,
-            author=current_user.name,
             date=date.today().strftime("%B %d, %Y")
         )
         print(date.today().strftime("%B %d, %Y"))
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+        return redirect(url_for("home"))
+    return render_template("make-post.html", form=form,
+                           masthead_text=masthead_text, subheading_text=subheading_text)
 
 
 @app.route("/edit-post/<int:post_id>", methods=["POST", "GET"])
 @login_required
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
-    print(post.user.name)
     edit_form = CreatePostForm(
         title=post.title,
         subtitle=post.subtitle,
@@ -281,7 +312,7 @@ def delete_post(post_id):
     post_to_delete = BlogPost.query.get(post_id)
     db.session.delete(post_to_delete)
     db.session.commit()
-    return redirect(url_for('get_all_posts'))
+    return redirect(url_for('home'))
 
 
 @app.route("/comment/<int:post_id>", methods=["POST", "GET"])
