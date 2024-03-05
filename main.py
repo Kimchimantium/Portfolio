@@ -22,8 +22,9 @@ dotenv.load_dotenv()
 
 
 # TODO
-# apply flask-login system ✓
-# first post create ✓
+# post.html: edit size of wtf-quickform btn
+# base.html: change navbar padding
+#sqldb: connect to render.com PostgreSQL
 
 
 # make flask app
@@ -36,7 +37,7 @@ Bootstrap(app)
 faker = Fk(['ko-KR', 'ja-JP'])
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -186,6 +187,8 @@ def portfolio():
 
 @app.route("/post/<int:post_id>", methods=["GET"])
 def show_post(post_id):
+    masthead_text = 'PORTFOLIO'
+    subheading_text = 'See the Works'
     editor_auth = False
     # show comments
     blogpost_instance = BlogPost.query.get(post_id)
@@ -207,7 +210,9 @@ def show_post(post_id):
                            comment_form=CommentForm(),
                            post=blogpost_instance,
                            name='Jiwoo',
-                           editor_auth=editor_auth)
+                           editor_auth=editor_auth,
+                           masthead_text=masthead_text,
+                           subheading_text=subheading_text)
 
 
 
@@ -277,7 +282,7 @@ def add_new_post():
         print(date.today().strftime("%B %d, %Y"))
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for("home"))
+        return redirect(url_for("portfolio"))
     return render_template("make-post.html", form=form,
                            masthead_text=masthead_text, subheading_text=subheading_text)
 
@@ -312,7 +317,7 @@ def delete_post(post_id):
     post_to_delete = BlogPost.query.get(post_id)
     db.session.delete(post_to_delete)
     db.session.commit()
-    return redirect(url_for('home'))
+    return redirect(url_for('portfolio'))
 
 
 @app.route("/comment/<int:post_id>", methods=["POST", "GET"])
