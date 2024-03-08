@@ -56,11 +56,11 @@ login_manager.init_app(app)
 # with app.app_context():
 #     db.session.query(User).delete()
 
-with app.app_context():
-    to_edit_db = db.session.query(BlogPost).filter_by(title='Breakout').first()
-    print(to_edit_db.body)
-    to_edit_db.body_kor = """"""
-    db.session.commit()
+# with app.app_context():
+#     to_edit_db = db.session.query(BlogPost).filter_by(title='TODO').first()
+#     print(to_edit_db.body)
+#     to_edit_db.body_kor = """"""
+#     db.session.commit()
 
 
 

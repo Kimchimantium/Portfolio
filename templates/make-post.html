@@ -8,7 +8,7 @@
             {{ ckeditor.load() }}
             {{ ckeditor.config(name='body') }}
             <div class="container mt-3">
-                {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary btn-sm mt-3"}) }}
             </div>
         </div>
     </div>
