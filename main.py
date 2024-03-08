@@ -37,6 +37,8 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 faker = Fk(['ko-KR', 'ja-JP'])
 
+
+
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -324,6 +326,9 @@ def edit_post(post_id):
 
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
+    if not current_user.is_admin:
+        flash('Access denied: You must be an admin to access this page.', 'danger')
+        return redirect(url_for('home'))
     comments_to_delete = Comment.query.filter_by(blogpost_id=post_id)
     for comment in comments_to_delete:
         db.session.delete(comment)
@@ -338,7 +343,7 @@ def delete_post(post_id):
 def comment(post_id):
     post_to_comment = BlogPost.query.get(post_id)
     form = CommentForm()
-
+    
     if form.validate_on_submit():
         new_comment = Comment(
             blogpost=post_to_comment,
