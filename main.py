@@ -4,7 +4,7 @@ from flask_ckeditor import CKEditor
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table, Integer, ForeignKey
+from sqlalchemy import Table, Integer, ForeignKey, desc, asc
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 # from flask_gravatar import Gravatar
@@ -13,6 +13,7 @@ from flask_migrate import Migrate
 from faker import Faker as Fk
 import smtplib
 from smtplib import SMTP
+from sqlalchemy import text
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -20,11 +21,11 @@ import dotenv
 
 dotenv.load_dotenv()
 
-
 # TODO
 # skill-stacks.html: fix skill stack's collapse btn logic ✓
 # clean-blog.min.css: mobile-friendly btn, navbar, font-size, margin setting ✓
 # main.py: enable werkzeug.security hash password system
+# sqldb: reset alembic_version
 
 
 # make flask app
@@ -42,19 +43,25 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
-with app.app_context():
-    db.create_all()
+# with app.app_context():
+#     db.create_all()
 
+
+    
 # instance of flask_login
 login_manager = LoginManager()
 # bind flask app with LoginManager()
 login_manager.init_app(app)
+
+# with app.app_context():
+#     db.session.query(User).delete()
 
 
 # login_manager, load_user setting for login_manager to pass the user id from db
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
 
 @app.route('/', methods=["POST", "GET"])
 def home():
@@ -175,7 +182,7 @@ def logout():
 
 @app.route('/portfolio')
 def portfolio():
-    posts = BlogPost.query.all()
+    posts = BlogPost.query.order_by(asc(BlogPost.date)).all()
     masthead_text = "PORTFOLIO"
     subheading_text = "See My Works"
     # check flask_login status with UserMixin conditions (returns false if not met)
@@ -221,7 +228,6 @@ def show_post(post_id):
                            subheading_text=subheading_text)
 
 
-
 @app.route("/skill-stacks")
 def about():
     masthead_text = "Skill Stack"
@@ -235,34 +241,35 @@ def contact():
     subheading_text = 'Contact Jiwoo'
     return render_template("contact.html", masthead_text=masthead_text, subheading_text=subheading_text)
 
+
 @app.route('/submit', methods=['POST'])
 def submit():
     MY_EMAIL = os.environ.get('MY_EMAIL')
     EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
     if request.method == 'POST':
-            name = request.form.get('name', '')
-            email = request.form.get('email', '')
-            phone = request.form.get('phone', '')
-            message = request.form.get('message', '')
-            # send contact info to my email
-            msg = MIMEMultipart()
-            msg['From'] = 'JiwooHub'
-            msg['To'] = MY_EMAIL
-            msg['Subject'] = 'New Contact Info Submission'
-            body = f"name: {name}\nemail: {email}\nphone: {phone}\nmessage: {message}"
-            msg.attach(MIMEText(body, 'plain'))
+        name = request.form.get('name', '')
+        email = request.form.get('email', '')
+        phone = request.form.get('phone', '')
+        message = request.form.get('message', '')
+        # send contact info to my email
+        msg = MIMEMultipart()
+        msg['From'] = 'JiwooHub'
+        msg['To'] = MY_EMAIL
+        msg['Subject'] = 'New Contact Info Submission'
+        body = f"name: {name}\nemail: {email}\nphone: {phone}\nmessage: {message}"
+        msg.attach(MIMEText(body, 'plain'))
 
-            try:
-                with SMTP("smtp.gmail.com", port=587) as connection:
-                    connection.starttls()
-                    connection.login(user=MY_EMAIL, password=EMAIL_PASSWORD)
-                    print('login successful')
-                    connection.send_message(msg)
-                    print("Email Sent Successfully")
-            except smtplib.SMTPException as e:
-                print(f"Error: {e}")
-            return redirect(url_for('contact'))
+        try:
+            with SMTP("smtp.gmail.com", port=587) as connection:
+                connection.starttls()
+                connection.login(user=MY_EMAIL, password=EMAIL_PASSWORD)
+                print('login successful')
+                connection.send_message(msg)
+                print("Email Sent Successfully")
+        except smtplib.SMTPException as e:
+            print(f"Error: {e}")
+        return redirect(url_for('contact'))
 
 
 @app.route("/post_1")
@@ -270,6 +277,7 @@ def post_1():
     post = BlogPost.query.get(1)
     comment_form = CommentForm()
     return render_template('post_1.html', post=post, comment_form=comment_form)
+
 
 @app.route("/make-post", methods=["POST", "GET"])
 @login_required
@@ -350,9 +358,11 @@ def delete_comment(post_id):
     db.session.commit()
     return redirect(url_for('show_post', post_id=post_id))
 
+
 @app.route('/bugfix', methods=['POST', 'GET'])
 def bugfix():
     return render_template('bugfix.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=3240)

@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(15), nullable=False, unique=False)
     email = db.Column(db.String(30), nullable=False, unique=True)
-    password = db.Column(db.String(30), nullable=False)
+    password = db.Column(db.String(512), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     blogposts = relationship("BlogPost", back_populates="user")
 
@@ -74,3 +74,23 @@ class Comment(db.Model):
     blogpost_id = Column(Integer, ForeignKey('blog_posts.id'))
     blogpost = relationship("BlogPost", back_populates="comments")
 
+class TodoUser(UserMixin, db.Model):
+    __tablename__ = 'todo_user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(512), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    todos = db.relationship('Todo', backref='user', lazy='dynamic')
+
+
+class Todo(db.Model):
+    __tablename__ = 'todo'
+    id = db.Column(db.Integer, primary_key=True)
+    task = db.Column(db.String(200))
+    description = db.Column(db.String(200))
+    importance = db.Column(db.Integer)
+    date = db.Column(db.Date)
+    time = db.Column(db.Time)
+    done = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('todo_user.id'))
