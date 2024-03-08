@@ -23,7 +23,8 @@ dotenv.load_dotenv()
 
 # TODO
 # skill-stacks.html: fix skill stack's collapse btn logic ✓
-
+# clean-blog.min.css: mobile-friendly btn, navbar, font-size, margin setting ✓
+# main.py: enable werkzeug.security hash password system
 
 
 # make flask app
@@ -124,14 +125,14 @@ def register():
                 to_add = User(
                     name=form.name.data,
                     email=form.email.data,
-                    password=form.password.data,
+                    password=generate_password_hash(form.password.data),
                     is_admin=True
                 )
             else:
                 to_add = User(
                     name=form.name.data,
                     email=form.email.data,
-                    password=form.password.data
+                    password=generate_password_hash(form.password.data)
                 )
             db.session.add(to_add)
             db.session.commit()
@@ -155,10 +156,10 @@ def login():
         if user_db is not None:
             print(user_db.password)
             print(form.password.data)
-            if user_db.password == form.password.data:
+            if check_password_hash(user_db.password, form.password.data):
                 # login with the sql db of the form matching user
                 login_user(user_db)
-                return redirect('/')
+                return redirect(url_for('home'))
         else:
             error = "Account Doesn't Exists"
     return render_template("login.html", form=form, error=error, masthead_text=masthead_text,
@@ -354,4 +355,4 @@ def bugfix():
     return render_template('bugfix.html')
 
 if __name__ == "__main__":
-    app.run(debug=True, port=3230)
+    app.run(debug=True, port=3240)

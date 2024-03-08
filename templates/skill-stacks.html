@@ -4,7 +4,8 @@
 {% block content %}
 <div class="row">
     <div class="col d-flex justify-content-center">
-        <a id='toggleButton' class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+        <a id='toggleButton' class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button"
+           aria-expanded="false"
            aria-controls="collapseExample" style="width:70%;">
             Hide Skill Stacks
             <i class="fa-solid fa-caret-up"></i> <!-- Place the icon inside a span for easier targeting -->
@@ -179,7 +180,13 @@
 </div>
 <!-- Resume Content-->
 <div class="container-xxl mt-5">
-    <button class='btn btn-danger btn-sm me-5 float-right' id="toggleLang">한/A</button>
+    <div class="row">
+        <div class="col-6">
+            </div>
+        <div class="col-6">
+        <button class='btn btn-danger btn-sm me-5 float-right' id="toggleLang">한/A</button>
+    </div>
+        </div>
     <div id="englishContent" class="language-content" style="display:none;">
         <div class="row justify-content-center">
             <div class="col-md-10">
@@ -190,22 +197,22 @@
                     basic to advanced syntax, data science, web development, GUI programming, data crawling, to task
                     automation.</p>
 
-                    <p>My learning journey focused not just on theory but on gaining practical experience necessary for
+                <p>My learning journey focused not just on theory but on gaining practical experience necessary for
                     Python development by implementing 100 real projects. Throughout this process, I completed a wide
                     range of projects, from entertaining games like Blackjack, Snake, and Pong, to applications useful
                     in real life such as a Tinder auto-swiping bot, a LinkedIn automatic job application app, and an
                     automatic birthday email sending system.</p>
 
-                    <p>In the field of data science, I conducted data analysis and visualization projects using Numpy,
+                <p>In the field of data science, I conducted data analysis and visualization projects using Numpy,
                     Pandas, Matplotlib, Seaborn, Plotly, and Scikit-Learn. For web development, I acquired comprehensive
                     web development skills, starting from the basics of HTML/CSS to Bootstrap, Flask, Jinja templating
                     engine, SQLite, SQLAlchemy, PostgreSQL, and backend development through REST APIs.</p>
 
-                    <p>In GUI programming, I gained experience in developing various desktop applications using Turtle and
+                <p>In GUI programming, I gained experience in developing various desktop applications using Turtle and
                     Tkinter, and mastered the techniques of web data extraction using BeautifulSoup and Selenium for
                     data crawling with Python.</p>
 
-                    <p>Through this entire learning process, I have acquired in-depth professional knowledge and diverse
+                <p>Through this entire learning process, I have acquired in-depth professional knowledge and diverse
                     project experience as a Python developer, enabling me to flexibly respond to any development
                     problem. With a passion for Python development and continuous learning, I aim to provide innovative
                     solutions in even more fields moving forward.</p>
