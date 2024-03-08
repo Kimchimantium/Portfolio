@@ -3,41 +3,54 @@
 
 {% block content %}
 <!-- Post Content -->
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto post">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto post">
+            <div class="row">
+                <div class="col-6">
+                </div>
+                <div class="col-6">
+                    <button class='btn btn-danger btn-sm me-5 float-right' id="toggleLang">한/A</button>
+                </div>
+            </div>
+            <div id="englishContent" class="language-content" style="display:none;">
                 {{ post.body|safe }}
-                {% if editor_auth or current_user.is_admin %}
-                <div class="clearfix">
-                    <a class="btn btn-primary btn-sm float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
-                </div>
-                <hr>
-                {% endif %}
-                <!--           Comments Area -->
-                <div class="col-lg-8 col-md-10 mx-auto comment">
-                    <ul class="list-group">
-                        {% for comment in comments %}
-                        {% if comment %}
-                        <li class="list-group-item">
-                            <div class="commenterImage">
-                                <img src="https://picsum.photos/3{{ loop.index }}/3{{ loop.index }}"/>
-                            </div>
-                            <div class="commentText">
-                                <p>{{ comment.text|safe }}</p>
-                                <span class="date sub-text">{{ comment.blogpost.user.name|safe }}</span>
-                                {% if current_user.is_authenticated %}
-                                <hr>
-                                <a href="{{url_for('delete_comment', post_id=post.id, text=comment.text) }}">✘</a>
-                                {% endif %}
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                </div>
+            </div>
+            <div id="koreanContent" class="language-content">
+                {{ post.body_kor|safe }}
+            </div>
+            {% if editor_auth or current_user.is_admin %}
+            <div class="clearfix">
+                <a class="btn btn-primary btn-sm float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit
+                    Post</a>
+            </div>
+            <hr>
+            {% endif %}
+            <!--           Comments Area -->
+            <div class="col-lg-8 col-md-10 mx-auto comment">
+                <ul class="list-group">
+                    {% for comment in comments %}
+                    {% if comment %}
+                    <li class="list-group-item">
+                        <div class="commenterImage">
+                            <img src="https://picsum.photos/3{{ loop.index }}/3{{ loop.index }}"/>
+                        </div>
+                        <div class="commentText">
+                            <p>{{ comment.text|safe }}</p>
+                            <span class="date sub-text">{{ comment.blogpost.user.name|safe }}</span>
+                            {% if current_user.is_authenticated %}
+                            <hr>
+                            <a href="{{url_for('delete_comment', post_id=post.id, text=comment.text) }}">✘</a>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
+</div>
 <hr>
 <div class="overlay"></div>
 <div class="container">

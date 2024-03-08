@@ -37,8 +37,6 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 faker = Fk(['ko-KR', 'ja-JP'])
 
-
-
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -48,15 +46,22 @@ migrate = Migrate(app, db)
 # with app.app_context():
 #     db.create_all()
 
-
-    
 # instance of flask_login
 login_manager = LoginManager()
 # bind flask app with LoginManager()
 login_manager.init_app(app)
 
+
+# delete all db data
 # with app.app_context():
 #     db.session.query(User).delete()
+
+with app.app_context():
+    to_edit_db = db.session.query(BlogPost).filter_by(title='Breakout').first()
+    print(to_edit_db.body)
+    to_edit_db.body_kor = """"""
+    db.session.commit()
+
 
 
 # login_manager, load_user setting for login_manager to pass the user id from db
@@ -343,7 +348,7 @@ def delete_post(post_id):
 def comment(post_id):
     post_to_comment = BlogPost.query.get(post_id)
     form = CommentForm()
-    
+
     if form.validate_on_submit():
         new_comment = Comment(
             blogpost=post_to_comment,
